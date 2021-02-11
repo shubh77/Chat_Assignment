@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/text_margin"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_user"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/ic_user"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Name"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/iv_user"
+            android:layout_marginTop="30dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints"
+            app:layout_constraintTop_toBottomOf="@id/et_name">
+                <LinearLayout
+                    android:id="@+id/ll_phone_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="MissingConstraints">
+                        <EditText
+                            android:id="@+id/et_country_code_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/et_name"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:hint="+91"
+                            android:textSize="14sp"/>
+                        <EditText
+                            android:id="@+id/et_phone_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="11"
+                            android:hint="Enter Phone No"
+                            android:textSize="14sp"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_phone_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="MissingConstraints"
+                    android:weightSum="5"
+                    android:visibility="gone">
+                        <EditText
+                            android:id="@+id/et_country_code_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:hint="+91"
+                            android:textSize="14sp"/>
+
+                        <EditText
+                            android:id="@+id/et_phone_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4"
+                            android:layout_below="@+id/et_name"
+                            android:inputType="number"
+                            android:maxLength="11"
+                            android:hint="Enter Phone No"
+                            android:textSize="14sp"
+                            app:layout_constraintTop_toBottomOf="@id/et_name"/>
+
+                        <ImageView
+                            android:id="@+id/iv_cancel_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_cancel_round"
+                            android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_phone_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:ignore="MissingConstraints"
+                    android:weightSum="5"
+                    android:visibility="gone">
+                        <EditText
+                            android:id="@+id/et_country_code_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:layout_below="@+id/et_name"
+                            android:inputType="number"
+                            android:maxLength="4"
+                            android:hint="+91"
+                            android:textSize="14sp"
+                            app:layout_constraintTop_toBottomOf="@id/et_name"/>
+
+                        <EditText
+                            android:id="@+id/et_phone_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4"
+                            android:inputType="number"
+                            android:maxLength="11"
+                            android:hint="Enter Phone No"
+                            android:textSize="14sp"/>
+
+                        <ImageView
+                            android:id="@+id/iv_cancel_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/ic_cancel_round"
+                            android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/et_dob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_phone"
+            android:hint="Enter DOB"
+            android:textSize="14sp"
+            android:editable="false"
+            android:onClick="onClick"
+            app:layout_constraintTop_toBottomOf="@id/ll_phone"/>
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_dob"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="@string/btn_save"
+            android:onClick="onClick"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/et_dob"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
