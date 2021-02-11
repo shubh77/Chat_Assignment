@@ -8,8 +8,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="grey">#696969</color>
+    <color name="light_grey">#bfbfbf</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_sky">#e5f4fe</color>
     <color name="light_sky">#87cefa</color>
+    <color name="transparent">#00000000</color>
 
 
 

@@ -1,11 +1,14 @@
 package com.reino.assignment.view.fragment;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -15,15 +18,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.reino.assignment.R;
-import com.reino.assignment.db.dao.ContactDao;
 import com.reino.assignment.model.UserModel;
 import com.reino.assignment.viewmodel.AppViewModel;
 
@@ -40,7 +45,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditUserFragment extends Fragment implements View.OnClickListener {
 
     private CircleImageView iv_profile;
-    private EditText et_name, et_phone1, et_phone2, et_phone3, et_countryCode1, et_countryCode2, et_countryCode3, et_dob;
+    private EditText et_name, et_phone1, et_phone2, et_phone3, et_countryCode1, et_countryCode2, et_countryCode3;
+    private TextView tvDob;
     private ImageView iv_cancel2, iv_cancel3;
     private LinearLayout ll_phone1, ll_phone2, ll_phone3;
 
@@ -83,14 +89,16 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         String[] numbers;
         picturePath = user.getPic();
         if (picturePath != null && !picturePath.equals("")) {
-            Uri uri = Uri.parse(user.getPic());
-            iv_profile.setImageURI(uri);
+            Glide.with(getContext())
+                    .load(Uri.parse(user.getPic()))
+                    .error(R.drawable.ic_user)
+                    .into(iv_profile);
         } else {
             picturePath = "";
             iv_profile.setImageResource(R.drawable.ic_user);
         }
         et_name.setText(user.getName());
-        et_dob.setText(user.getDob());
+        tvDob.setText(user.getDob());
         if (user.getPhone() != null) {
             number="";
                 for (int pos = 0; pos < user.getPhone().size(); pos++) {
@@ -144,7 +152,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         iv_cancel2 = view.findViewById(R.id.iv_cancel_2);
         iv_cancel3 = view.findViewById(R.id.iv_cancel_3);
 
-        et_dob = view.findViewById(R.id.et_dob);
+        tvDob = view.findViewById(R.id.tv_dob);
         btn_update = view.findViewById(R.id.btn_update);
 
         enableOrDisableView(false);
@@ -188,9 +196,9 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                             countryCode = et_countryCode3.getText().toString();
                         phoneList.add(countryCode + "-" + et_phone3.getText().toString());
                     }
-                    UserModel userModel = new UserModel(picturePath, et_name.getText().toString(),
+                    UserModel userModel = new UserModel(user.getId(), picturePath, et_name.getText().toString(),
                             phoneList,
-                            et_dob.getText().toString());
+                            tvDob.getText().toString());
                     appViewModel.update(userModel);
                     enableOrDisableView(false);
                 }
@@ -234,9 +242,10 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                     ll_phone3.setVisibility(View.VISIBLE);
             }
         });
+        iv_profile.setOnClickListener(this);
         iv_cancel2.setOnClickListener(this);
         iv_cancel3.setOnClickListener(this);
-        et_dob.setOnClickListener(v -> showCalendar());
+        tvDob.setOnClickListener(v -> showCalendar());
 
         return view;
     }
@@ -260,7 +269,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
             public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
                 month = month + 1; // As Jan starts from 0
                 String date = dayOfMonth + "/" + month + "/" + year;
-                et_dob.setText(date);
+                tvDob.setText(date);
             }
         },
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -278,7 +287,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         et_phone1.setEnabled(enable);
         et_phone2.setEnabled(enable);
         et_phone3.setEnabled(enable);
-        et_dob.setEnabled(enable);
+        tvDob.setEnabled(enable);
         btn_update.setEnabled(enable);
     }
 
@@ -297,12 +306,17 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         et_phone3.setText("");
         ll_phone2.setVisibility(View.GONE);
         ll_phone3.setVisibility(View.GONE);
-        et_dob.setText("");
+        tvDob.setText("");
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_user:
+                if (picturePath != null && !picturePath.equals("")) {
+                    showFullImageDialog();
+                }
+                break;
             case R.id.iv_cancel_2:
                 et_countryCode2.setText("");
                 et_phone2.setText("");
@@ -315,5 +329,56 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
                 ll_phone3.setVisibility(View.GONE);
                 break;
         }
+    }
+
+    public void showFullImageDialog() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        /*builder.setPositiveButton("Get Pro", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        }).setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });*/
+        /*final Dialog dialog = new Dialog(getContext());//builder.create();
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogLayout = inflater.inflate(R.layout.dialog_full_image, null);
+        dialog.setView(dialogLayout);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        ImageView image = dialog.findViewById(R.id.goProDialogImage);
+        Uri uri = Uri.parse(user.getPic());
+        image.setImageURI(uri);
+        dialog.show();*/
+
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+        View dialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.customview, viewGroup, false);
+        builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();*/
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.dialog_full_image);
+
+        ImageView imageView = dialog.findViewById(R.id.goProDialogImage);
+        Glide.with(getContext())
+                .load(Uri.parse(user.getPic()))
+                .error(R.drawable.ic_user)
+                .into(imageView);
+
+        /*Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });*/
+
+        dialog.show();
     }
 }

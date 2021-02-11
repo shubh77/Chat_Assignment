@@ -59,7 +59,7 @@ public class AppViewModel extends AndroidViewModel {
         isMultiSelectOn.postValue(isMultiSelect);
     }
 
-    public static LiveData<Boolean> getIsMultiSelectOn() {
+    public LiveData<Boolean> getIsMultiSelectOn() {
         return isMultiSelectOn;
     }
     /**
@@ -140,7 +140,7 @@ public class AppViewModel extends AndroidViewModel {
 
                     @Override
                     public void onComplete() {
-                        Toast.makeText(getApplication(), "Users deleted", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplication(), "Users deleted", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -153,7 +153,7 @@ public class AppViewModel extends AndroidViewModel {
         userRepo.deleteAllUsers();
     }
 
-    //CONTACTS
+    /**------------------------------------------CONTACTS----------------------------------------------*/
 
     private SyncContacts syncContacts;
     public LiveData<PagedList<ContactModel>> contactList;
@@ -164,6 +164,16 @@ public class AppViewModel extends AndroidViewModel {
     }
 
     public void setIsProgress(Boolean isFlag) {
+        isProgress.setValue(isFlag);
+    }
+
+    public MutableLiveData<Boolean> isDeleteClick = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> getIsDeleteClick() {
+        return isProgress;
+    }
+
+    public void setIsDeleteClick(Boolean isFlag) {
         isProgress.setValue(isFlag);
     }
 
@@ -251,7 +261,6 @@ public class AppViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-
         compositeDisposable.clear();
     }
 }

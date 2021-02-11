@@ -37,6 +37,15 @@ public class UserModel implements Serializable {
     public UserModel() {
     }
 
+    public UserModel(Integer id, String pic, String name, List<String> phone, String dob) {
+        this.id = id;
+        this.pic = pic;
+        this.name = name;
+        this.phone = phone;
+        this.dob = dob;
+        this.timeStamp = ""+System.currentTimeMillis();
+    }
+
     public UserModel(String pic, String name, List<String> phone, String dob) {
         this.pic = pic;
         this.name = name;

@@ -3,11 +3,13 @@ package com.reino.assignment.view.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +27,13 @@ import com.reino.assignment.viewmodel.AppViewModel;
  * Use the {@link MainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements ViewPager.OnPageChangeListener {
     private AppViewModel viewModel;
     private ImageView deleteUserIcon;
     private RelativeLayout initialLayout, searchLayout;
+    private static final String TAG = "MainFragment";
+    private ImageView searchIcon;
+    private EditText searchEditText;
 
     public MainFragment() {
         // Required empty public constructor
@@ -42,6 +47,14 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(getActivity()).get(AppViewModel.class);
+
+        viewModel.getIsMultiSelectOn().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                Log.d(TAG, "onChanged: " + aBoolean);
+                deleteUser(aBoolean);
+            }
+        });
     }
 
     @Override
@@ -59,7 +72,7 @@ public class MainFragment extends Fragment {
 
         initialLayout = view.findViewById(R.id.initialLayout);
         searchLayout = view.findViewById(R.id.searchLayout);
-        ImageView searchIcon = view.findViewById(R.id.searchIcon);
+        searchIcon = view.findViewById(R.id.searchIcon);
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +90,7 @@ public class MainFragment extends Fragment {
             }
         });
 
-        EditText searchEditText = view.findViewById(R.id.searchEditText);
+        searchEditText = view.findViewById(R.id.searchEditText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -105,15 +118,36 @@ public class MainFragment extends Fragment {
         deleteUserIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                deleteUser(false);
+                viewModel.setIsDeleteClick(true);
             }
         });
+
+        viewPager.addOnPageChangeListener(this);
         return view;
     }
 
     private void deleteUser(boolean toDelete) {
         deleteUserIcon.setVisibility(toDelete ? View.VISIBLE : View.GONE);
         initialLayout.setVisibility(toDelete ? View.GONE : View.VISIBLE);
-        searchLayout.setVisibility(toDelete ? View.GONE : View.VISIBLE);
+        searchLayout.setVisibility(View.GONE);
+        searchEditText.getText().clear();
+    }
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        deleteUser(false);
+        searchIcon.setVisibility(position == 1 ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

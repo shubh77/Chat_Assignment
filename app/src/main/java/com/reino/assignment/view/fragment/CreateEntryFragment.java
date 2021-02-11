@@ -28,6 +28,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.reino.assignment.R;
@@ -51,7 +52,8 @@ import static android.app.Activity.RESULT_CANCELED;
 public class CreateEntryFragment extends Fragment implements View.OnClickListener {
 
     private CircleImageView iv_user;
-    private EditText et_name, et_phone1, et_phone2, et_phone3, et_countryCode1, et_countryCode2, et_countryCode3, et_dob;
+    private EditText et_name, et_phone1, et_phone2, et_phone3, et_countryCode1, et_countryCode2, et_countryCode3;
+    private TextView tvDob;
     private ImageView iv_cancel2, iv_cancel3;
     private LinearLayout ll_phone1, ll_phone2, ll_phone3;
     private Button btn_save;
@@ -102,7 +104,7 @@ public class CreateEntryFragment extends Fragment implements View.OnClickListene
         et_countryCode3 = view.findViewById(R.id.et_country_code_3);
         iv_cancel2 = view.findViewById(R.id.iv_cancel_2);
         iv_cancel3 = view.findViewById(R.id.iv_cancel_3);
-        et_dob = view.findViewById(R.id.et_dob);
+        tvDob = view.findViewById(R.id.tv_dob);
         btn_save = view.findViewById(R.id.btn_save);
         btn_save.setOnClickListener(v -> {
             if (!et_name.getText().toString().equals("")) {
@@ -125,7 +127,7 @@ public class CreateEntryFragment extends Fragment implements View.OnClickListene
                 }
                 UserModel userModel = new UserModel(picturePath, et_name.getText().toString(),
                         phoneList,
-                        et_dob.getText().toString());
+                        tvDob.getText().toString());
                 appViewModel.insert(userModel);
                 Toast.makeText(getContext(), "Data has been inserted successfully.", Toast.LENGTH_SHORT).show();
                 reset();
@@ -171,7 +173,7 @@ public class CreateEntryFragment extends Fragment implements View.OnClickListene
         });
         iv_cancel2.setOnClickListener(this);
         iv_cancel3.setOnClickListener(this);
-        et_dob.setOnClickListener(v -> showCalendar());
+        tvDob.setOnClickListener(v -> showCalendar());
         iv_user.setOnClickListener(v -> pictureOption());
         return view;
     }
@@ -185,7 +187,7 @@ public class CreateEntryFragment extends Fragment implements View.OnClickListene
             public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
                 month = month + 1; // As Jan starts from 0
                 String date = dayOfMonth + "/" + month + "/" + year;
-                et_dob.setText(date);
+                tvDob.setText(date);
             }
         },
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -314,7 +316,7 @@ public class CreateEntryFragment extends Fragment implements View.OnClickListene
         et_phone3.setText("");
         ll_phone2.setVisibility(View.GONE);
         ll_phone3.setVisibility(View.GONE);
-        et_dob.setText("");
+        tvDob.setText("");
     }
 
     @Override

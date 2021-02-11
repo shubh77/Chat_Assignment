@@ -1,5 +1,6 @@
 package com.reino.assignment.adapter;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.reino.assignment.R;
@@ -31,6 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserAdapter extends PagedListAdapter<UserModel, UserAdapter.MyViewHolder> {
 
     private static final String TAG = "UserAdapter";
+    private Context context;
     private String number="";
     private EditDeleteClickListener mListener;
     private SelectClickListener selectClickListener;
@@ -39,8 +42,9 @@ public class UserAdapter extends PagedListAdapter<UserModel, UserAdapter.MyViewH
         super(DIFF_CALLBACK);
     }
 
-    public UserAdapter(EditDeleteClickListener listener, SelectClickListener selectClickListener) {
+    public UserAdapter(Context context, EditDeleteClickListener listener, SelectClickListener selectClickListener) {
         super(DIFF_CALLBACK);
+        this.context = context;
         this.mListener = listener;
         this.selectClickListener = selectClickListener;
     }
@@ -87,10 +91,15 @@ public class UserAdapter extends PagedListAdapter<UserModel, UserAdapter.MyViewH
         viewBinderHelper.closeLayout(user.getName());
 
         if (user.getPic() != null && !user.getPic().equals("")) {
-            Uri uri = Uri.parse(user.getPic());
-            holder.iv_profile.setImageURI(uri);
+            Glide.with(context)
+                    .load(Uri.parse(user.getPic()))
+                    .error(R.drawable.ic_user)
+                    .into(holder.iv_profile);
         } else {
-            holder.iv_profile.setImageResource(R.drawable.ic_user);
+            Glide.with(context)
+                    .load(R.drawable.ic_user)
+                    .error(R.drawable.ic_user)
+                    .into(holder.iv_profile);
         }
         holder.tvName.setText(user.getName());
         holder.tvDob.setText(user.getDob());

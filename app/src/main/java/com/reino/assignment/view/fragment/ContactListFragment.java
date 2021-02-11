@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -116,7 +117,7 @@ public class ContactListFragment extends Fragment implements SearchUser {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.contacts_list);
-        adapter = new ContactsRecyclerViewAdapter();
+        adapter = new ContactsRecyclerViewAdapter(getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
@@ -130,10 +131,17 @@ public class ContactListFragment extends Fragment implements SearchUser {
         recyclerView.setHasFixedSize(true);
         showContacts();
         viewModel.queryContactList();
-        updateUI(false);
+        /*updateUI(false);
 
-        manageProgressBar();
+        manageProgressBar();*/
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        updateUI(false);
+        manageProgressBar();
     }
 
     /**

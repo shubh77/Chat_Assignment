@@ -1,7 +1,11 @@
 package com.reino.assignment.view.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -12,17 +16,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
 import com.reino.assignment.R;
 import com.reino.assignment.adapter.UserAdapter;
 import com.reino.assignment.callback.EditDeleteClickListener;
-import com.reino.assignment.callback.SelectClickListener;
 import com.reino.assignment.callback.SearchUser;
+import com.reino.assignment.callback.SelectClickListener;
 import com.reino.assignment.model.UserModel;
 import com.reino.assignment.view.activity.MainActivity;
 import com.reino.assignment.viewmodel.AppViewModel;
@@ -35,11 +33,6 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class ShowListFragment extends Fragment implements SearchUser, EditDeleteClickListener, SelectClickListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     public AppViewModel appViewModel;
     private static final String TAG = "ShowListFragment";
     private RecyclerView rv_list;
@@ -52,13 +45,6 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment ShowListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ShowListFragment newInstance() {
         ShowListFragment fragment = new ShowListFragment();
         return fragment;
@@ -71,7 +57,7 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
         super.onCreate(savedInstanceState);
 
         deleteUserList = new ArrayList<>();
-        adapter = new UserAdapter(mListener, this);
+        adapter = new UserAdapter(getContext(), mListener, this);
         appViewModel = ViewModelProviders.of(getActivity()).get(AppViewModel.class);
         appViewModel.getUsersList();
         appViewModel.getInputSearchText().observe(this, new Observer<String>() {
@@ -110,6 +96,7 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
 
         updateUI();
         observeMultiSelectStatus();
+        deleteSelectedUsers();
         return view;
     }
 
@@ -128,13 +115,23 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
         });
     }
 
+    public void deleteSelectedUsers() {
+        appViewModel.getIsDeleteClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                for (int pos=0; pos<deleteUserList.size(); pos++) {
+                    appViewModel.delete(deleteUserList.get(pos));
+                }
+                deleteUserList.clear();
+                appViewModel.setIsMultiSelect(false);
+            }
+        });
+    }
+
     @Override
     public void click(boolean isDelete, UserModel user) {
         if (isDelete) {
             appViewModel.delete(user);
-        }
-        else {
-
         }
     }
 
@@ -144,18 +141,17 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
 
         if (multiSelectStatus) {
             if (!deleteUserList.contains(user)) {
-                view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.light_sky));
+                view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.white_sky));
                 deleteUserList.add(user);
             } else {
                 deleteUserList.remove(user);
                 view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.white));
             }
-
+            if (deleteUserList.isEmpty()) {
+                appViewModel.setIsMultiSelect(false);
+            }
         } else {
             ((MainActivity)getActivity()).launchEditUser(user);
-//            Intent intentEditUserInfoActivity = new Intent(getContext(), EditUserInfoActivity.class);
-//            intentEditUserInfoActivity.putExtra("User", user);
-//            startActivity(intentEditUserInfoActivity);
         }
 
     }
@@ -164,24 +160,9 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
     public void onItemLongClicked(View view, UserModel user, int index) {
         Log.d("TAG", "index: " + index + "Name: " + user.getName());
 
-        view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.light_sky));
+        view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.white_sky));
         deleteUserList.add(user);
         Log.d("TAG", "LongItemClick: " + index);
         appViewModel.setIsMultiSelect(true);
     }
-
-   /* @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if (item.getItemId() == R.id.multi_select_delete) {
-
-            for (User user : deleteUserList) {
-                fragmentViewModel.deleteUser(user);
-            }
-
-            deleteUserList.clear();
-//            fragmentViewModel.setIsMultiSelect(false);
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 }

@@ -1,5 +1,6 @@
 package com.reino.assignment.adapter;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.reino.assignment.R;
 import com.reino.assignment.model.ContactModel;
 
@@ -25,6 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, ContactsRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "ContactsRecyclerViewAda";
+    private Context context;
     private ContactModel contact;
     private String number="";
 
@@ -42,6 +45,11 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
 
     public ContactsRecyclerViewAdapter() {
         super(DIFF_CALLBACK);
+    }
+
+    public ContactsRecyclerViewAdapter(Context context) {
+        super(DIFF_CALLBACK);
+        this.context = context;
     }
 
     @Override
@@ -70,7 +78,15 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
         Log.d(TAG, "Photo : "+contact.getPhoto());
         if (contact.getPhoto() != null && !contact.getPhoto().equals("")) {
             Uri uri = Uri.parse(contact.getPhoto());
-            holder.iv_profile.setImageURI(uri);
+            Glide.with(context)
+                    .load(uri)
+                    .error(R.drawable.ic_user)
+                    .into(holder.iv_profile);
+        } else {
+            Glide.with(context)
+                    .load(R.drawable.ic_user)
+                    .error(R.drawable.ic_user)
+                    .into(holder.iv_profile);
         }
     }
 
