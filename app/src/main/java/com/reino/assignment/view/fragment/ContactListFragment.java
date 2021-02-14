@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,12 +24,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.reino.assignment.R;
 import com.reino.assignment.adapter.ContactsRecyclerViewAdapter;
+import com.reino.assignment.callback.ContactItemClickListener;
 import com.reino.assignment.utils.ContactChangeListener;
 import com.reino.assignment.callback.SearchUser;
 import com.reino.assignment.model.ContactModel;
@@ -40,7 +44,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class ContactListFragment extends Fragment implements SearchUser {
+public class ContactListFragment extends Fragment implements SearchUser, ContactItemClickListener {
     private static final String TAG = "ContactListFragment";
     private RecyclerView recyclerView;
     private ContactsRecyclerViewAdapter adapter;
@@ -49,6 +53,7 @@ public class ContactListFragment extends Fragment implements SearchUser {
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     private Activity mActivity;
     private ProgressBar progressBar;
+    private NavController navController;
 
     public static ContactListFragment newInstance() {
         return new ContactListFragment();
@@ -79,9 +84,11 @@ public class ContactListFragment extends Fragment implements SearchUser {
     ContactChangeListener.IChangeListener contactChangeListener = new ContactChangeListener.IChangeListener() {
         @Override
         public void onContactChanged() {
-            Log.d("Observer_contact", "Thread onContactChanged: ");
-            showContacts();
-            updateUI(true);
+            if (isAdded()) {
+                Log.d("Observer_contact", "Thread onContactChanged: ");
+                showContacts();
+                updateUI(true);
+            }
         }
     };
 
@@ -117,7 +124,7 @@ public class ContactListFragment extends Fragment implements SearchUser {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.contacts_list);
-        adapter = new ContactsRecyclerViewAdapter(getContext());
+        adapter = new ContactsRecyclerViewAdapter(getContext(), this::onItemClick);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
@@ -140,6 +147,7 @@ public class ContactListFragment extends Fragment implements SearchUser {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
         updateUI(false);
         manageProgressBar();
     }
@@ -148,7 +156,7 @@ public class ContactListFragment extends Fragment implements SearchUser {
      * This method sets the ProgressBar visibility to GONE, once the data got fetched completely.
      */
     public void manageProgressBar() {
-        viewModel.getIsProgress().observe(this, new Observer<Boolean>() {
+        viewModel.getIsProgress().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (!aBoolean) {
@@ -194,14 +202,12 @@ public class ContactListFragment extends Fragment implements SearchUser {
     @Override
     public void searchName(String name) {
         Log.d(TAG, "searchName: "+name);
-       /* if (viewModel != null) {
-            Log.d(TAG, "viewModel != null");
-            viewModel.queryContactListSearch(name);
-        }
-        else {
-            Log.d(TAG, "viewModel = null");
-            viewModel = ViewModelProviders.of(this).get(PageViewModel.class);
-            viewModel.queryContactListSearch(name);
-        }*/
+    }
+
+    @Override
+    public void onItemClick(ContactModel contactModel) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("contact_details", contactModel);
+        navController.navigate(R.id.action_mainFragment_to_singleContactViewFragment, bundle);
     }
 }

@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,10 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.reino.assignment.R;
+import com.reino.assignment.callback.ContactItemClickListener;
 import com.reino.assignment.model.ContactModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +27,7 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
     private Context context;
     private ContactModel contact;
     private String number="";
+    private ContactItemClickListener contactItemClickListener;
 
     public static DiffUtil.ItemCallback<ContactModel> DIFF_CALLBACK = new DiffUtil.ItemCallback<ContactModel>() {
         @Override
@@ -47,9 +45,10 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
         super(DIFF_CALLBACK);
     }
 
-    public ContactsRecyclerViewAdapter(Context context) {
+    public ContactsRecyclerViewAdapter(Context context, ContactItemClickListener contactItemClickListener) {
         super(DIFF_CALLBACK);
         this.context = context;
+        this.contactItemClickListener = contactItemClickListener;
     }
 
     @Override
@@ -90,11 +89,11 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
         }
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder   implements View.OnClickListener{
         public CircleImageView iv_profile;
         public TextView title;
         public TextView phone;
-        public RelativeLayout contact_select_layout;
+        public RelativeLayout contactSelectLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -102,7 +101,15 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
             iv_profile = itemView.findViewById(R.id.iv_profile);
             title = (TextView) itemView.findViewById(R.id.tv_name);
             phone = (TextView) itemView.findViewById(R.id.tv_phone);
-            contact_select_layout = itemView.findViewById(R.id.contact_select_layout);
+            contactSelectLayout = itemView.findViewById(R.id.contact_select_layout);
+
+            contactSelectLayout.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (contactItemClickListener != null)
+                contactItemClickListener.onItemClick(getItem(getAdapterPosition()));
         }
     }
 }

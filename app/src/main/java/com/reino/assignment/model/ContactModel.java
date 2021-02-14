@@ -8,12 +8,13 @@ import androidx.room.TypeConverters;
 
 import com.reino.assignment.db.ListConverter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity(tableName = "ContactDB")
-public class ContactModel {
+public class ContactModel implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
@@ -29,17 +30,22 @@ public class ContactModel {
     @ColumnInfo(name = "contact_numbers")
     private List<String> phone;
 
+    @TypeConverters(ListConverter.class)
+    @ColumnInfo(name = "phone_type")
+    private List<String> phoneType;
+
     @ColumnInfo(name = "timeStamp")
     private String timeStamp;
 
     public ContactModel() {}
 
-    public ContactModel(Integer id, String photo, String name, List<String> phone, String timeStamp) {
+    public ContactModel(Integer id, String photo, String name, List<String> phone, String timeStamp, List<String> phoneType) {
         this.id = id;
         this.photo = photo;
         this.name = name;
         this.phone = phone;
         this.timeStamp = timeStamp;
+        this.phoneType = phoneType;
     }
 
     public String getName() {
@@ -80,6 +86,14 @@ public class ContactModel {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public List<String> getPhoneType() {
+        return phoneType;
+    }
+
+    public void setPhoneType(List<String> phoneType) {
+        this.phoneType = phoneType;
     }
 
     @Override

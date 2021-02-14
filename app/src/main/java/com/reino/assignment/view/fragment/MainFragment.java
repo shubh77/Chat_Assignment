@@ -34,6 +34,7 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
     private static final String TAG = "MainFragment";
     private ImageView searchIcon;
     private EditText searchEditText;
+    private View view;
 
     public MainFragment() {
         // Required empty public constructor
@@ -61,7 +62,14 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_main, container, false);
+            initializeView();
+        }
+        return view;
+    }
+
+    private void initializeView() {
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getActivity(), getActivity().getSupportFragmentManager());
         ViewPager viewPager = view.findViewById(R.id.view_pager);
         viewPager.setOffscreenPageLimit(1);
@@ -124,7 +132,6 @@ public class MainFragment extends Fragment implements ViewPager.OnPageChangeList
         });
 
         viewPager.addOnPageChangeListener(this);
-        return view;
     }
 
     private void deleteUser(boolean toDelete) {

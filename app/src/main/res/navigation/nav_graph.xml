@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.reino.assignment.view.fragment.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_editUserFragment"
+            app:destination="@id/editUserFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_singleContactViewFragment"
+            app:destination="@id/singleContactViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editUserFragment"
+        android:name="com.reino.assignment.view.fragment.EditUserFragment"
+        android:label="EditUserFragment" />
+    <fragment
+        android:id="@+id/singleContactViewFragment"
+        android:name="com.reino.assignment.view.fragment.SingleContactViewFragment"
+        android:label="SingleContactViewFragment" />
+</navigation>

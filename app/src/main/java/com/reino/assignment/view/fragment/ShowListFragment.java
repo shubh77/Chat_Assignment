@@ -7,10 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,8 +42,10 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
     private RecyclerView rv_list;
     private UserAdapter adapter;
     ArrayList<UserModel> deleteUserList;
+    private View view;
 
     boolean multiSelectStatus = false;
+    private NavController navController;
 
     public ShowListFragment() {
         // Required empty public constructor
@@ -70,6 +76,12 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
         });
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
     /**
      * This method is used for fetching the updated List based on Either filtered or whole list.
      */
@@ -87,7 +99,9 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_show_list, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_show_list, container, false);
+        }
         rv_list = view.findViewById(R.id.rv_list);
         rv_list.setLayoutManager(new LinearLayoutManager(getContext()));
         rv_list.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
@@ -102,7 +116,7 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
 
     @Override
     public void searchName(String name) {
-        Log.d(TAG, "searchName: "+name);
+        Log.d(TAG, "searchName: " + name);
     }
 
 
@@ -119,7 +133,7 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
         appViewModel.getIsDeleteClick().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
-                for (int pos=0; pos<deleteUserList.size(); pos++) {
+                for (int pos = 0; pos < deleteUserList.size(); pos++) {
                     appViewModel.delete(deleteUserList.get(pos));
                 }
                 deleteUserList.clear();
@@ -151,7 +165,10 @@ public class ShowListFragment extends Fragment implements SearchUser, EditDelete
                 appViewModel.setIsMultiSelect(false);
             }
         } else {
-            ((MainActivity)getActivity()).launchEditUser(user);
+//            ((MainActivity)getActivity()).launchEditUser(user);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("user_details", user);
+            navController.navigate(R.id.action_mainFragment_to_editUserFragment, bundle);
         }
 
     }

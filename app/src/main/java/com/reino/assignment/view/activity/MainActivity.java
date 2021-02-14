@@ -20,11 +20,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager manager = getSupportFragmentManager();
+        /*FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.mainContainer, MainFragment.newInstance(),TAG);
         transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.commit();*/
     }
 
     public void launchEditUser(UserModel user){

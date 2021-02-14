@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -49,6 +51,7 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     private TextView tvDob;
     private ImageView iv_cancel2, iv_cancel3;
     private LinearLayout ll_phone1, ll_phone2, ll_phone3;
+    private NavController navController;
 
     private Button btn_update;
     private static final String TAG = "EditUserFragment";
@@ -160,7 +163,8 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().getSupportFragmentManager().popBackStackImmediate();
+                //getActivity().getSupportFragmentManager().popBackStackImmediate();
+                navController.navigateUp();
             }
         });
 
@@ -253,8 +257,9 @@ public class EditUserFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
         if (getArguments() != null) {
-            user = (UserModel) getArguments().getSerializable(ARG_PARAM1);
+            UserModel user = (UserModel) getArguments().getSerializable("user_details");
             inflateUI(user);
             Log.d(TAG, "onCreate: "+user.toString());
         }
