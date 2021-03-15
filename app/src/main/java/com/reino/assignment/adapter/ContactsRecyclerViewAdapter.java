@@ -28,6 +28,7 @@ public class ContactsRecyclerViewAdapter extends PagedListAdapter<ContactModel, 
     private ContactModel contact;
     private String number="";
     private ContactItemClickListener contactItemClickListener;
+    private int count =0;
 
     public static DiffUtil.ItemCallback<ContactModel> DIFF_CALLBACK = new DiffUtil.ItemCallback<ContactModel>() {
         @Override
